@@ -10,7 +10,7 @@
       <span>공지사항</span>
       <span>
         <table
-          style="collapse; border: 1px #50bcdf;"
+          style="border: 1px #50bcdf;"
           width="100%"
           cellpadding="5"
           cellspacing="0"
@@ -125,10 +125,13 @@
         :page-range="5"
         :margin-pages="0"
         :click-handler="clickCallback"
-        :prev-text="'이전'"
-        :next-text="'다음'"
+        :prev-text="'<'"
+        :next-text="'>'"
         :container-class="'pagination'"
         :page-class="'page-item'"
+        :first-last-button=true
+        :first-button-text="'<<'"
+        :last-button-text="'>>'"
       >
       </paginate>
     </div>
@@ -163,7 +166,7 @@ export default {
     paginate: Paginate,
   },
   mounted() {
-    this.searchButton();
+    this.searchNotice();
   },
   methods: {
     searchDetail: async function (notice_id) {
@@ -198,7 +201,7 @@ export default {
         };
       }
     },
-    searchButton: function (pageno) {
+    searchNotice: function (pageno) {
       if(!pageno) {
         this.currentPage = 1;
       } else {

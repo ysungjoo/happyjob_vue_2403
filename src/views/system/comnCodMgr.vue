@@ -11,7 +11,7 @@
       <span>그룹 코드</span>
       <span>
         <table
-          style="collapse; border: 1px #50bcdf;"
+          style="border: 1px #50bcdf;"
           width="100%"
           cellpadding="5"
           cellspacing="0"
@@ -127,10 +127,13 @@
         :page-range="5"
         :margin-pages="0"
         :click-handler="clickCallback"
-        :prev-text="'Prev'"
-        :next-text="'Next'"
+        :prev-text="'<'"
+        :next-text="'>'"
         :container-class="'pagination'"
         :page-class="'page-item'"
+        :first-last-button=true
+        :first-button-text="'<<'"
+        :last-button-text="'>>'"
       >
       </paginate>
     </div>
@@ -154,7 +157,7 @@
         </span>
         <span>
           <table
-            style="collapse; border: 1px #50bcdf;"
+            style="border: 1px #50bcdf;"
             width="100%"
             cellpadding="5"
             cellspacing="0"
@@ -228,10 +231,13 @@
           :page-range="5"
           :margin-pages="0"
           :click-handler="clickCallback2"
-          :prev-text="'Prev'"
-          :next-text="'Next'"
+          :prev-text="'<'"
+          :next-text="'>'"
           :container-class="'pagination'"
           :page-class="'page-item'"
+          :first-last-button=true
+          :first-button-text="'<<'"
+          :last-button-text="'>>'"
         >
         </paginate>
       </div>

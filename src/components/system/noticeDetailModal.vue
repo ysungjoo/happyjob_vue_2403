@@ -73,6 +73,21 @@
             ></textarea>
           </td>
         </tr>
+        <tr v-if="paction == 'I'">
+          <th scope="row">첨부파일</th>
+          <td colspan="3">
+            <input type="file" class="inputTxt p100" @change="handleAttach" ref="attachImage" accept="image/*" />
+          </td>
+        </tr>
+        <tr v-if="paction == 'U' && fileRelativePath">
+          <th scope="row">첨부파일</th>
+          <td colspan="3">
+            <input type="text" class="" readonly v-model="fileName"/>&nbsp;
+            <a class="" id="download" :href="fileRelativePath" download>
+                <button class="">다운로드</button>
+            </a>
+          </td>
+        </tr>
         <tr>
           <th scope="row">열람권한</th>
           <td colspan="3">
@@ -125,6 +140,9 @@ export default {
       saveUrl: "",
       loginName: "",
       delshow: true,
+      image: '',
+      fileName: '',
+      fileRelativePath: '',
     };
   },
   computed: {},
@@ -158,8 +176,8 @@ export default {
           vm.noticeRegdate = response.data.date;
           vm.noticeAuth = response.data.auth;
           vm.noticeViewCnt = response.data.view_cnt;
-          //vm.loginName = response.data.result.loginName;
-
+          vm.fileName = response.data.file_ofname;
+          vm.fileRelativePath = response.data.file_relative_path;
           vm.delshow = true;
         })
         .catch(function (error) {
@@ -175,6 +193,7 @@ export default {
 
       if (confirm("저장하시겠습니까?")) {
         let vm = this;
+        /*
         let params = new URLSearchParams();
         
         params.append("title", this.noticeTitle);
@@ -190,7 +209,51 @@ export default {
           params.append("noFile", "noFile");
           this.saveUrl = "/system/modifyNotice.do"
         }
+        */
+        const formData = new FormData();
+        formData.append("title", this.noticeTitle);
+        formData.append("content", this.noticeContent);
+        formData.append("auth", this.noticeAuth);
+        if(this.image.length > 0) {
+          formData.append("file", this.image[0]);
+          formData.append("isFile", "isFile");
+        }
 
+        //formData.append("noFile", "noFile");
+        console.log('image:::' +this.image[0]);
+        console.log('fileName:::' +this.image[0].name);
+
+        if(this.paction == "I") {
+          this.saveUrl = "/system/writeNotice.do"
+        } else if(this.paction == "U") {
+          formData.append("notice_id", this.noticeNo);
+          formData.append("file_nm", this.image[0].name);
+          this.saveUrl = "/system/modifyNotice.do"
+        }
+
+        this.axios({
+            method: "post",
+            url: this.saveUrl,
+            headers:{
+              'Content-Type': 'multipart/form-data',
+            },
+            data: formData
+          })
+          .then(function (response) {
+            console.log(response);
+            let status = response.status;
+            //let msg = response.data.resultMsg;
+            if (status == 200) {
+              alert("저장이 완료되었습니다.");
+              closeModal(vm);
+            } else {
+              alert("API 요청에 오류가 있습니다.");
+            }
+          })
+          .catch(function (error) {
+            alert("에러! API 요청에 오류가 있습니다. " + error);
+          });
+/*
         this.axios
           .post(this.saveUrl, params)
           .then(function (response) {
@@ -207,6 +270,7 @@ export default {
           .catch(function (error) {
             alert("에러! API 요청에 오류가 있습니다. " + error);
           });
+          */
       }
     },
     deleteNotice: function () {
@@ -273,6 +337,10 @@ export default {
         this.$refs.content.value = this.noticeContent.substring(0,1000);
       }
       return false;
+    },
+    handleAttach: function () {
+      this.image = this.$refs.attachImage.files;
+      console.log(this.image);
     }
   }
 };
