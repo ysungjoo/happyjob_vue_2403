@@ -251,7 +251,7 @@ export default {
             }
           })
           .catch(function (error) {
-            alert("에러! API 요청에 오류가 있습니다. " + error);
+            alert("에러! API 요청에 오류가 있습니다." + error);
           });
 /*
         this.axios
@@ -298,29 +298,14 @@ export default {
       closeModal(vm);
     },
     validateIsNull: function () {
-      let chk = this.checkNotEmpty([
-        ["noticeTitle", "제목을  입력해주세요."],
-        ["noticeContent", "내용을  입력해주세요."],
-      ]);
-      return chk;
-    },
-    checkNotEmpty: function (arr) {
-      for (var i = 0, len = arr.length; i < len; i++) {
-        var elem = document.getElementById(arr[i][0]);
-        console.log("elem is...");
-        console.log(elem);
-        if (elem.length <= 0) {
-          continue;
-        }
-        var elemValue = elem.value;
-        var alertMsg = arr[i][1];
-
-        console.log(elemValue);
-        if (elemValue == "") {
-          alert(alertMsg);
-          elem.focus();
-          return false;
-        }
+      if(this.$refs.title.value == "") {
+        alert("제목을  입력해주세요.");
+        this.$refs.title.focus();
+        return false;
+      } else if(this.$refs.content.value == "") {
+        alert("내용을  입력해주세요.");
+        this.$refs.content.focus();
+        return false;
       }
       return true;
     },
