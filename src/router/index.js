@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import store from "../store/index.js";
+import ZipCode from "@/components/common/DaumZipCode.vue";
 //import Content from "../views/Content.vue";
 
 const checkAuthed = function(to, from, next) {
@@ -59,10 +60,16 @@ const routes = [{
         component: Home,
     },
     {
+        path: "/zipcode",
+        name: "zipcode",
+        component: ZipCode,
+    },
+    {
         path: "/",
         name: "login",
         component: Login,
     },
+
 ];
 
 const router = createRouter({
