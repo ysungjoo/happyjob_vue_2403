@@ -1,7 +1,7 @@
 <template>
-  <div id="d-api-zone">
+  <!--div id="d-api-zone"></div-->
     <VueDaumPostcode @complete="sendAPIdata" />
-  </div>
+  
 </template>
 
 <script>
@@ -13,7 +13,10 @@ export default {
   },
   methods: {
     sendAPIdata: function (resp) {
-      this.emitter.emit("daumZipResult", resp);
+      //this.emitter.emit("daumZipResult", resp);
+      console.log(':::' + resp);
+      window.opener.postMessage({ result: resp }, "*");
+      window.close();
     },
   },
 };
