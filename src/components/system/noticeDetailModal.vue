@@ -149,15 +149,17 @@ export default {
     };
   },
   computed: {},
-  created: () => {
+  created: () => {},
+  // html 로딩, 가상 dom 실행, 이 두 개 연결 시 작동
+  mounted: function () {
     //created에서 이제 data와 events가 활성화 되어 접근할 수 있다. 여전히 템플릿과 가상돔은 마운트 및 렌더링 되지 않은 상태이다.
     window.addEventListener("message", event => {
       console.log(event.data.result);
-      this.$refs.title.value = event.data.result.address;
+      if(event.data.result) {
+        this.$refs.title.value = event.data.result.address;
+      }
     });
-  },
-  // html 로딩, 가상 dom 실행, 이 두 개 연결 시 작동
-  mounted: function () {
+
     let vm = this;
     // 신규 등록 시
     if (this.noticeNo == null || this.noticeNo == "") {
