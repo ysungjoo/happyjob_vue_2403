@@ -236,9 +236,9 @@ export default {
         if(this.image.length > 0) {
           formData.append("file", this.image[0]);
           formData.append("isFile", "isFile");
-          if(this.fileNo == 0) {
+          if(this.paction == 'U' && this.fileNo == 0) {
             this.fileStatus =  'A';
-          } else {
+          } else if(this.paction == 'U' && this.fileNo != 0){
             this.fileStatus =  'M';
           }
         }
