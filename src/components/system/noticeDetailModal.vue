@@ -251,19 +251,20 @@ export default {
           this.saveUrl = "/system/writeNotice.do"
         } else if(this.paction == "U") {
           if(this.fileStatus =='D') {
-            formData.append("deleted", "deleted");
-          } else if(this.fileStatus =='M') {
+            formData.append("deleted", "deleted"); // 첨부파일만 삭제하고 저장하는 경우
+          } else if(this.fileStatus =='M') { // 첨부파일 삭제후 첨부추가하여 저장하는경우
             formData.append("modified", "modified");
-          }  else if(this.fileStatus =='A') {
+            formData.append("file_nm", this.image[0].name);
+          }  else if(this.fileStatus =='A') { // 기존에 첨부가 없었는데 새로 추가 하는경우
             formData.append("added", "added");
             this.fileNo = 0;
+            formData.append("file_nm", this.image[0].name);
           } else {
-            formData.append("noFile", "noFile");
+            formData.append("noFile", "noFile"); // 첨부가 없는 경우
           }
           formData.append("file_no", this.fileNo);
           formData.append("file_nm", this.fileName);
           formData.append("notice_id", this.noticeNo);
-          //formData.append("file_nm", this.image[0].name);
           this.saveUrl = "/system/modifyNotice.do"
         }
 
