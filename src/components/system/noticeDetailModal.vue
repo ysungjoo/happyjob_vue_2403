@@ -73,7 +73,7 @@
             ></textarea>
           </td>
         </tr>
-        <tr v-if="paction == 'I' || fileStatus == 'D'">
+        <tr v-if="paction == 'I' || fileNo == 0 || fileStatus == 'D'">
           <th scope="row">첨부파일</th>
           <td colspan="3">
             <input type="file" class="inputTxt p100" @change="handleAttach" ref="attachImage" accept="image/*" />
@@ -147,7 +147,7 @@ export default {
       loginName: "",
       delshow: true,
       image: '',
-      fileNo: '',
+      fileNo: 0,
       fileName: '',
       fileRelativePath: '',
       fileStatus: '',
@@ -193,10 +193,11 @@ export default {
           vm.noticeRegdate = response.data.date;
           vm.noticeAuth = response.data.auth;
           vm.noticeViewCnt = response.data.view_cnt;
-          vm.fileNo = response.data.file_no;
+          vm.fileNo = response.data.file_no?parseInt(response.data.file_no):0;
           vm.fileName = response.data.file_ofname;
           vm.fileRelativePath = response.data.file_relative_path;
           vm.delshow = true;
+          console.log(vm.fileNo)
         })
         .catch(function (error) {
           alert("에러! API 요청에 오류가 있습니다. " + error);
@@ -235,7 +236,11 @@ export default {
         if(this.image.length > 0) {
           formData.append("file", this.image[0]);
           formData.append("isFile", "isFile");
-          this.fileStatus =  'A';
+          if(this.fileNo == 0) {
+            this.fileStatus =  'A';
+          } else {
+            this.fileStatus =  'M';
+          }
         }
 
         //formData.append("noFile", "noFile");
@@ -247,8 +252,11 @@ export default {
         } else if(this.paction == "U") {
           if(this.fileStatus =='D') {
             formData.append("deleted", "deleted");
-          } else if(this.fileStatus =='A') {
+          } else if(this.fileStatus =='M') {
+            formData.append("modified", "modified");
+          }  else if(this.fileStatus =='A') {
             formData.append("added", "added");
+            this.fileNo = 0;
           } else {
             formData.append("noFile", "noFile");
           }
