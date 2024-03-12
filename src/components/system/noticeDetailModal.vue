@@ -73,18 +73,21 @@
             ></textarea>
           </td>
         </tr>
-        <tr v-if="paction == 'I'">
+        <tr v-if="paction == 'I' || fileStatus == 'D'">
           <th scope="row">첨부파일</th>
           <td colspan="3">
             <input type="file" class="inputTxt p100" @change="handleAttach" ref="attachImage" accept="image/*" />
           </td>
         </tr>
-        <tr v-if="paction == 'U' && fileRelativePath">
+        <tr v-if="paction == 'U' && fileRelativePath && fileStatus == ''">
           <th scope="row">첨부파일</th>
           <td colspan="3">
             <input type="text" class="" readonly v-model="fileName"/>&nbsp;
             <a class="" id="download" :href="fileRelativePath" download>
                 <button class="">다운로드</button>
+            </a>
+            <a class="mx-2" @click="deleteFile()" >
+                <button class="">삭제</button>
             </a>
           </td>
         </tr>
@@ -144,8 +147,10 @@ export default {
       loginName: "",
       delshow: true,
       image: '',
+      fileNo: '',
       fileName: '',
       fileRelativePath: '',
+      fileStatus: '',
     };
   },
   computed: {},
@@ -154,7 +159,7 @@ export default {
   mounted: function () {
     //created에서 이제 data와 events가 활성화 되어 접근할 수 있다. 여전히 템플릿과 가상돔은 마운트 및 렌더링 되지 않은 상태이다.
     window.addEventListener("message", event => {
-      console.log(event.data.result);
+      //console.log(event.data.result);
       if(event.data.result) {
         this.$refs.title.value = event.data.result.address;
       }
@@ -188,6 +193,7 @@ export default {
           vm.noticeRegdate = response.data.date;
           vm.noticeAuth = response.data.auth;
           vm.noticeViewCnt = response.data.view_cnt;
+          vm.fileNo = response.data.file_no;
           vm.fileName = response.data.file_ofname;
           vm.fileRelativePath = response.data.file_relative_path;
           vm.delshow = true;
@@ -229,17 +235,27 @@ export default {
         if(this.image.length > 0) {
           formData.append("file", this.image[0]);
           formData.append("isFile", "isFile");
+          this.fileStatus =  'A';
         }
 
         //formData.append("noFile", "noFile");
-        console.log('image:::' +this.image[0]);
-        console.log('fileName:::' +this.image[0].name);
+        //console.log('image:::' +this.image[0]);
+        //console.log('fileName:::' +this.image[0].name);
 
         if(this.paction == "I") {
           this.saveUrl = "/system/writeNotice.do"
         } else if(this.paction == "U") {
+          if(this.fileStatus =='D') {
+            formData.append("deleted", "deleted");
+          } else if(this.fileStatus =='A') {
+            formData.append("added", "added");
+          } else {
+            formData.append("noFile", "noFile");
+          }
+          formData.append("file_no", this.fileNo);
+          formData.append("file_nm", this.fileName);
           formData.append("notice_id", this.noticeNo);
-          formData.append("file_nm", this.image[0].name);
+          //formData.append("file_nm", this.image[0].name);
           this.saveUrl = "/system/modifyNotice.do"
         }
 
@@ -339,6 +355,9 @@ export default {
       this.image = this.$refs.attachImage.files;
       console.log(this.image);
     },
+    deleteFile: function() {
+      this.fileStatus = 'D';
+    }
     /*
     openZipCode: function() {
       window.open('/#/zipcode','_blank', 'width=400, height=580');
