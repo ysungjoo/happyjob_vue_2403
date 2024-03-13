@@ -34,7 +34,16 @@
                   <option value="title">제목</option>
                   <option value="content">내용</option>
                 </select>
-
+                <select
+                  id="spCombo"
+                  class="form-control"
+                  style="width: 150px"
+                  v-model="spCombo" ref="test"
+                >
+                  <template v-for="key in spOptions" r>
+                    <option value="key.cd" selected>{{ key.name }}</option>
+                  </template>
+                </select>
                 <input
                   type="text"
                   style="width: 200px"
@@ -142,6 +151,7 @@
 import { openModal } from "jenesius-vue-modal";
 import noticeDetailModal from "@/components/system/noticeDetailModal.vue";
 import Paginate from "vuejs-paginate-next";
+import bizUtil from "../../common/bizUtil.js"
 
 export default {
     data: function () {
@@ -160,6 +170,8 @@ export default {
       noticeId: '',
       countShow: true,
       title: '',
+      spCombo: 'asd',
+      spOptions: [],
     };
   },
   components: {
@@ -167,6 +179,7 @@ export default {
   },
   mounted() {
     this.searchNotice();
+    bizUtil.selectComCombo('sp','', this.spComboListCallback);
   },
   methods: {
     searchDetail: async function (notice_id) {
@@ -252,7 +265,11 @@ export default {
         result = result + 1;
         return result;
       }
-    }
+    },
+    spComboListCallback: function(list){
+      console.log("list::::" + JSON.stringify(list))
+      this.spOptions = list;
+    },
   }
 }
 </script>
